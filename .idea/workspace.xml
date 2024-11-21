@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf419107-53e9-4db8-a21e-a68003ceef08" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/currycoin/TransactionInput.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/BlockHeader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/Hash.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/Hash.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/currycoin/script/ScriptStack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/ScriptStack.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +41,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "8c1055e0",
+    "git-widget-placeholder": "a5baba1a",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/tim/programming/java/currycoin",
     "vue.rearranger.settings.migration": "true"
