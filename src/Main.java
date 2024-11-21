@@ -1,8 +1,10 @@
-import javax.crypto.*;
-import java.security.*;
-import java.util.*; 
+import block.Block;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Main {
+
 	public static String bytesToHex(byte[] arr) {
 		String hex = "";
 		for (byte i : arr) {
@@ -12,10 +14,8 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws NoSuchAlgorithmException {
-		MessageDigest mess = MessageDigest.getInstance("SHA-256");
-		mess.update("Hello".getBytes());
-
-		String md = bytesToHex(mess.digest());
-		System.out.println(md);
+		Block block = new Block("Hello".getBytes(),"Hello".getBytes(),3);
+		System.out.println(bytesToHex(block.hash()));
+		System.out.println(block);
 	}
 }
