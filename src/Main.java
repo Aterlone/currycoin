@@ -1,21 +1,21 @@
-import block.Block;
+import currycoin.Block;
+import currycoin.Hash;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Main {
 
-	public static String bytesToHex(byte[] arr) {
-		String hex = "";
-		for (byte i : arr) {
-			hex += String.format("%02X", i);
-		}
-		return hex;
-	}
-
 	public static void main(String[] args) throws NoSuchAlgorithmException {
-		Block block = new Block("Hello".getBytes(),"Hello".getBytes(),3);
-		System.out.println(bytesToHex(block.hash()));
+		MessageDigest mess = MessageDigest.getInstance("SHA-256");
+		mess.update("Hi".getBytes());
+		Hash prevHash = new Hash(mess.digest());
+
+		mess.update("aefiajfoij".getBytes());
+		Hash transHash = new Hash(mess.digest());
+
+		Block block = new Block(prevHash, transHash,3);
 		System.out.println(block);
+		System.out.println(block.hash());
 	}
 }
