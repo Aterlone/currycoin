@@ -2,6 +2,7 @@ package currycoin;
 
 import java.util.Arrays;
 
+/// Creates a safe Hash Record which can store a hash, and return it in various forms.
 public record Hash(byte[] data) {
 
     public Hash {

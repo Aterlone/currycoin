@@ -1,4 +1,4 @@
-import currycoin.Block;
+import currycoin.BlockHeader;
 import currycoin.Hash;
 
 import java.security.MessageDigest;
@@ -14,7 +14,7 @@ public class Main {
 		mess.update("aefiajfoij".getBytes());
 		Hash transHash = new Hash(mess.digest());
 
-		Block block = new Block(prevHash, transHash,3);
+		BlockHeader block = new BlockHeader(prevHash, transHash,3);
 		System.out.println(block);
 		System.out.println(block.hash());
 	}

@@ -2,7 +2,8 @@ package currycoin;
 
 import java.security.*;
 
-public record Block(Hash prevHash, Hash transHash, int nonce) {
+/// The header of a block.
+public record BlockHeader(Hash prevHash, Hash transHash, int nonce) {
 
     public Hash hash() throws NoSuchAlgorithmException {
         MessageDigest mess = MessageDigest.getInstance("SHA-256");
