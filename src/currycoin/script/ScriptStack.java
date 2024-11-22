@@ -25,12 +25,13 @@ public class ScriptStack {
     }
 
     public String toString() {
-        String stackString = "";
-        for (ByteArray byteArray : stack) {
-            stackString += byteArray.toString();
-            stackString += "\n";
+        StringBuilder builder = new StringBuilder("Size: " + stack.size());
+
+        for (ByteArray byteArray : stack.reversed()) {
+            builder.append("\n");
+            builder.append(byteArray.toPrettyString());
         }
-        return stackString;
+        return builder.toString();
     }
 
 }

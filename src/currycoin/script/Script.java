@@ -27,4 +27,8 @@ public record Script(List<Instruction> instructions) {
 		}
 		return new Script(instructions);
 	}
+
+	public static Script of(Instruction... instructions) {
+		return new Script(List.of(instructions));
+	}
 }

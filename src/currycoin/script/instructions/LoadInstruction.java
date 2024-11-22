@@ -26,4 +26,12 @@ public record LoadInstruction(byte numBytes, ByteArray data) implements Instruct
 	public static boolean isInRange(byte numBytes) {
 		return numBytes >= MIN_NUM_BYTES && numBytes <= MAX_NUM_BYTES;
 	}
+
+	public static LoadInstruction ofData(ByteArray data) {
+		return new LoadInstruction((byte) data.length(), data);
+	}
+
+	public static LoadInstruction loadInt(int value) {
+		return ofData(ByteArray.fromInt(value));
+	}
 }

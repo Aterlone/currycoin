@@ -74,4 +74,25 @@ public record ByteArray(byte[] data) {
 	public boolean equals(Object o) {
 		return o instanceof ByteArray h && Arrays.equals(h.data, data);
 	}
+
+	@Override
+	public String toString() {
+		return "0x" + bytesToHex(data);
+	}
+
+	public String toPrettyString() {
+		String string = bytesToHex(data);
+		if (isInt())
+			return String.format("0x%-8s (%d)", string, toInt());
+		else
+			return "0x" + string;
+	}
+
+	private static String bytesToHex(byte[] arr) {
+		StringBuilder hex = new StringBuilder();
+		for (byte i : arr) {
+			hex.append(String.format("%02x", i));
+		}
+		return hex.toString();
+	}
 }

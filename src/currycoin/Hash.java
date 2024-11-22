@@ -29,10 +29,10 @@ public record Hash(byte[] data) {
     }
 
     private static String bytesToHex(byte[] arr) {
-        String hex = "";
+        StringBuilder hex = new StringBuilder();
         for (byte i : arr) {
-            hex += String.format("%02X", i);
+            hex.append(String.format("%02x", i));
         }
-        return hex;
+        return hex.toString();
     }
 }

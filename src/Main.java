@@ -1,12 +1,15 @@
 import currycoin.BlockHeader;
 import currycoin.Hash;
 import currycoin.script.ByteArray;
+import currycoin.script.Script;
 import currycoin.script.ScriptStack;
 import currycoin.script.instructions.*;
 
-import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import static currycoin.script.instructions.LoadInstruction.loadInt;
+import static currycoin.script.instructions.OrdinaryInstruction.*;
 
 public class Main {
 
@@ -22,7 +25,27 @@ public class Main {
 		System.out.println(block);
 		System.out.println(block.hash());
 
-		//Testing PushInstruction
+		// testing script
+		ScriptStack stack = new ScriptStack();
+		System.out.println(stack);
+
+		Script script = Script.of(
+				loadInt(0xABCD),
+				loadInt(1),
+				loadInt(2),
+				DUPLICATE_TWO,
+				ARITHMETIC_ADD,
+				ROTATE_THREE,
+				ROTATE_THREE,
+				ARITHMETIC_SUB
+		);
+
+		for (Instruction instruction : script.instructions()) {
+			System.out.println("\nexecuting " + instruction);
+			boolean success = instruction.execute(stack);
+			System.out.println("success: " + success);
+			System.out.println(stack);
+		}
 
 	}
 }
