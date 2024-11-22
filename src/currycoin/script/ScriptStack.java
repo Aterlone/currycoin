@@ -1,11 +1,13 @@
 package currycoin.script;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 
 public class ScriptStack {
 
-    private final ArrayList<ByteBuffer> stack = new ArrayList<ByteBuffer>();
+    private final Deque<ByteArray> stack = new ArrayDeque<>();
 
     private void outOfBounds (int index) {
         if (stack.isEmpty()) {
@@ -17,36 +19,10 @@ public class ScriptStack {
         }
     }
 
-    public void push (ByteBuffer data) {
-        stack.add(data);
-    }
-
-    public ByteBuffer pop () {
-        outOfBounds(stack.size() - 1);
-        return stack.removeLast();
-    }
-
-    public ByteBuffer get (int index) {
-        outOfBounds(stack.size() - (index + 1));
-        return stack.get(stack.size() - (index + 1));
-    }
-
-    public void insert (int index, ByteBuffer data) {
-        outOfBounds(stack.size() - (index + 1));
-        stack.add(stack.size() - (index + 1), data);
-    }
-
-    public ByteBuffer remove (int index) {
-        outOfBounds(stack.size() - (index + 1));
-        ByteBuffer val = stack.get(stack.size() - (index + 1));
-        stack.remove(stack.size() - (index + 1));
-        return val;
-    }
-
     public String toString() {
         String stackString = "";
-        for (ByteBuffer byteBuffer : stack) {
-            stackString += new String(byteBuffer.array());
+        for (ByteArray byteArray : stack) {
+            stackString += byteArray.toString();
             stackString += "\n";
         }
         return stackString;

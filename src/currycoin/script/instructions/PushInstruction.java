@@ -1,23 +1,23 @@
 package currycoin.script.instructions;
 
+import currycoin.script.ByteArray;
 import currycoin.script.Instruction;
 import currycoin.script.ScriptStack;
 
-import java.nio.ByteBuffer;
 
 public class PushInstruction implements Instruction {
-    private ByteBuffer data;
+    private ByteArray data;
 
-    public PushInstruction(ByteBuffer data) {
+    public PushInstruction(ByteArray data) {
         this.data = data;
     }
 
-    public void setData(ByteBuffer data) {
+    public void setData(ByteArray data) {
         this.data = data;
     }
 
     @Override
     public void execute(ScriptStack stack) {
-        stack.push(this.data);
+        //skip for now
     }
 }

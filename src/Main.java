@@ -1,5 +1,6 @@
 import currycoin.BlockHeader;
 import currycoin.Hash;
+import currycoin.script.ByteArray;
 import currycoin.script.ScriptStack;
 import currycoin.script.instructions.*;
 
@@ -22,11 +23,6 @@ public class Main {
 		System.out.println(block.hash());
 
 		//Testing PushInstruction
-		ByteBuffer byteBuffer = ByteBuffer.allocate(10);
-		ScriptStack stack = new ScriptStack();
 
-		PushInstruction push = new PushInstruction(byteBuffer);
-		push.execute(stack);
-		System.out.println(stack.toString());
 	}
 }
