@@ -11,12 +11,12 @@ public sealed interface Instruction permits LoadInstruction, ConditionalBlock, O
     boolean execute(ScriptStack stack);
 
     static Instruction parseFrom(ByteBuffer buffer) {
-        parseFrom0(buffer, 0);
+        return parseFrom0(buffer, 0);
     }
 
     private static Instruction parseFrom0(ByteBuffer buffer, int depth) {
         if (depth > 20) {
-            throw new IllegalArgumentException("Maximum stack depth exceeded!");
+            throw new IllegalArgumentException("Maximum parsing stack depth exceeded!");
         }
         byte opcode = buffer.get();
         if (LoadInstruction.isInRange(opcode)) {
