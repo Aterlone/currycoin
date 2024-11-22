@@ -22,4 +22,9 @@ public record ConditionalBlock(List<Instruction> whenTrue, List<Instruction> whe
 
 		return true;
 	}
+
+	public static final byte IF_OPCODE = LoadInstruction.MAX_NUM_BYTES + 1;
+	public static final byte NOT_IF_OPCODE = LoadInstruction.MAX_NUM_BYTES + 2;
+	public static final byte ELSE_OPCODE = LoadInstruction.MAX_NUM_BYTES + 3;
+	public static final byte ENDIF_OPCODE = LoadInstruction.MAX_NUM_BYTES + 4;
 }

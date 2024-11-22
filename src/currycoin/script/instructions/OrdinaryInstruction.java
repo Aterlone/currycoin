@@ -289,6 +289,8 @@ public enum OrdinaryInstruction implements Instruction {
 		return true;
 	});
 
+	public static final byte FIRST_OPCODE = ConditionalBlock.ENDIF_OPCODE + 1;
+
 	private final Function<ScriptStack, Boolean> function;
 	OrdinaryInstruction(Function<ScriptStack, Boolean> function) {
 		this.function = function;
