@@ -12,6 +12,19 @@ public record ByteArray(byte[] data) {
 		return data.clone();
 	}
 
+	public int length() {
+		return data.length;
+	}
+
+	public boolean asBoolean() {
+		for (byte item : data) {
+			if (item != 0)
+				return true;
+		}
+
+		return false;
+	}
+
 	public boolean isInt() {
 		return data.length <= 4;
 	}
@@ -46,6 +59,10 @@ public record ByteArray(byte[] data) {
 		}
 
 		return new ByteArray(data);
+	}
+
+	public static ByteArray empty() {
+		return ZERO;
 	}
 
 	@Override

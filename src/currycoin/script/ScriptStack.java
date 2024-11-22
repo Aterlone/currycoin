@@ -6,17 +6,22 @@ import java.util.ArrayList;
 import java.util.Deque;
 
 public class ScriptStack {
-
     private final Deque<ByteArray> stack = new ArrayDeque<>();
 
-    private void outOfBounds (int index) {
-        if (stack.isEmpty()) {
-            throw new ArrayIndexOutOfBoundsException("No array value.");
-        } else {
-            if (stack.size() - (index) < 0) {
-                throw new ArrayIndexOutOfBoundsException("Accessed element out of bounds.");
-            }
-        }
+    public void push(ByteArray byteArray) {
+        stack.push(byteArray);
+    }
+
+    public ByteArray pop() {
+        return stack.pop();
+    }
+
+    public ByteArray peek() {
+        return stack.peek();
+    }
+
+    public int depth() {
+        return stack.size();
     }
 
     public String toString() {
