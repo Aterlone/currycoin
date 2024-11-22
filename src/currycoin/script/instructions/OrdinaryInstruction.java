@@ -6,6 +6,8 @@ import currycoin.script.ScriptStack;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static java.lang.Math.*;
+
 public enum OrdinaryInstruction implements Instruction {
 	PUSH_1(stack -> {
 		stack.push(ByteArray.fromInt(-1));
@@ -169,6 +171,38 @@ public enum OrdinaryInstruction implements Instruction {
 		ByteArray second = stack.pop();
 		return first.equals(second);
 	}),
+	ARITHMETIC_ADD1(stack -> {
+		int val = stack.pop().toInt();
+		stack.push(ByteArray.fromInt(++val));
+		return true;
+	}),
+	ARITHMETIC_SUB1(stack -> {
+		int val = stack.pop().toInt();
+		stack.push(ByteArray.fromInt(--val));
+		return true;
+	}),
+	ARITHMETIC_NEG(stack -> {
+		int val = stack.pop().toInt();
+		stack.push(ByteArray.fromInt(-1 * val));
+		return true;
+	}),
+	ARITHMETIC_ABS(stack -> {
+		int val = stack.pop().toInt();
+		stack.push(ByteArray.fromInt(abs(val)));
+		return true;
+	}),
+	ARITHMETIC_NOT(stack -> {
+		int val = stack.pop().toInt();
+		boolean boolVal = (val == 0);
+		stack.push(ByteArray.fromInt(boolVal ? 1 : 0));
+		return true;
+	}),
+	ARITHMETIC_0NOTEQUAL(stack -> {
+		int val = stack.pop().toInt();
+		boolean boolVal = (val != 0);
+		stack.push(ByteArray.fromInt(boolVal ? 1 : 0));
+		return true;
+	}),
 	ARITHMETIC_ADD(stack -> {
 		int first = stack.pop().toInt();
 		int second = stack.pop().toInt();
@@ -179,6 +213,79 @@ public enum OrdinaryInstruction implements Instruction {
 		int first = stack.pop().toInt();
 		int second = stack.pop().toInt();
 		stack.push(ByteArray.fromInt(second - first));
+		return true;
+	}),
+	ARITHMETIC_BOOLAND(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first != 0 && second != 0) ? 1 : 0));
+		return true;
+	}),
+	ARITHMETIC_BOOLOR(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first != 0 || second != 0) ? 1 : 0));
+		return true;
+	}),
+	ARITHMETIC_NUMEQUAL(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first == second) ? 1 : 0));
+		return true;
+	}),
+	ARITHMETIC_NUMEQUALVERIFY(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first == second) ? 1 : 0));
+		return first == second;
+	}),
+	ARITHMETIC_NUMNOTEQUAL(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first != second) ? 1 : 0));
+		return true;
+	}),
+	ARITHMETIC_LESSTHAN(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first < second) ? 1 : 0));
+		return true;
+	}),
+	ARITHMETIC_GREATERTHAN(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first > second) ? 1 : 0));
+		return true;
+	}),
+	ARITHMETIC_LESSTHANOREQUAL(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first <= second) ? 1 : 0));
+		return true;
+	}),
+	ARITHMETIC_GREATERTHANOREQUAL(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first >= second) ? 1 : 0));
+		return true;
+	}),
+	ARITHMETIC_MIN(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt(min(first, second)));
+		return true;
+	}),
+	ARITHMETIC_MAX(stack -> {
+		int first = stack.pop().toInt();
+		int second = stack.pop().toInt();
+		stack.push(ByteArray.fromInt(max(first, second)));
+		return true;
+	}),
+	ARITHMETIC_WITHIN(stack -> {
+		int first = stack.pop().toInt();
+		int min = stack.pop().toInt();
+		int max = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((first >= min && first < max) ? 1 : 0));
 		return true;
 	});
 
