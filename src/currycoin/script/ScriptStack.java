@@ -17,12 +17,10 @@ public class ScriptStack {
         }
     }
 
-    /// Pushes values to top of the stack. This method can be used for other push types.
     public void push (ByteBuffer data) {
         stack.add(data);
     }
 
-    /// Remove top of stack
     public ByteBuffer pop () {
         outOfBounds(stack.size() - 1);
         return stack.removeLast();
@@ -43,6 +41,15 @@ public class ScriptStack {
         ByteBuffer val = stack.get(stack.size() - (index + 1));
         stack.remove(stack.size() - (index + 1));
         return val;
+    }
+
+    public String toString() {
+        String stackString = "";
+        for (ByteBuffer byteBuffer : stack) {
+            stackString += new String(byteBuffer.array());
+            stackString += "\n";
+        }
+        return stackString;
     }
 
 }

@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="bf419107-53e9-4db8-a21e-a68003ceef08" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/currycoin/script/ScriptStack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/ScriptStack.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +18,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Record" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -41,7 +42,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "e999d136",
+    "git-widget-placeholder": "318cba6b",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/tim/programming/java/currycoin",
     "vue.rearranger.settings.migration": "true"

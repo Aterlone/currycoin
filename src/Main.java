@@ -1,6 +1,9 @@
 import currycoin.BlockHeader;
 import currycoin.Hash;
+import currycoin.script.ScriptStack;
+import currycoin.script.instructions.*;
 
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -17,5 +20,13 @@ public class Main {
 		BlockHeader block = new BlockHeader(prevHash, transHash,3);
 		System.out.println(block);
 		System.out.println(block.hash());
+
+		//Testing PushInstruction
+		ByteBuffer byteBuffer = ByteBuffer.allocate(10);
+		ScriptStack stack = new ScriptStack();
+
+		PushInstruction push = new PushInstruction(byteBuffer);
+		push.execute(stack);
+		System.out.println(stack.toString());
 	}
 }
