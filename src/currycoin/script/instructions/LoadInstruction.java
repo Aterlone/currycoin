@@ -34,7 +34,7 @@ public record LoadInstruction(byte numBytes, ByteArray data) implements Instruct
 	}
 
 	public static final byte MIN_NUM_BYTES = 0;
-	public static final byte MAX_NUM_BYTES = 75;
+	public static final byte MAX_NUM_BYTES = 95;
 
 	public static boolean isInRange(byte numBytes) {
 		return numBytes >= MIN_NUM_BYTES && numBytes <= MAX_NUM_BYTES;

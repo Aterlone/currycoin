@@ -1,5 +1,6 @@
 package currycoin.script.instructions;
 
+import currycoin.Hash;
 import currycoin.script.ByteArray;
 import currycoin.script.ScriptException;
 import currycoin.script.ScriptStack;
@@ -7,9 +8,7 @@ import currycoin.script.ScriptStack;
 import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.interfaces.ECPublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.function.Function;
+import java.security.spec.*;
 import java.util.stream.Stream;
 
 import static java.lang.Math.*;
@@ -213,19 +212,19 @@ public enum OrdinaryInstruction implements Instruction {
 	ARITHMETIC_ADD_1 {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int val = stack.pop().toInt();
-			stack.push(ByteArray.fromInt(++val));
+			stack.push(ByteArray.fromInt(val + 1));
 		}
 	},
 	ARITHMETIC_SUB_1 {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int val = stack.pop().toInt();
-			stack.push(ByteArray.fromInt(--val));
+			stack.push(ByteArray.fromInt(val - 1));
 		}
 	},
 	ARITHMETIC_NEG {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int val = stack.pop().toInt();
-			stack.push(ByteArray.fromInt(-1 * val));
+			stack.push(ByteArray.fromInt(-val));
 		}
 	},
 	ARITHMETIC_ABS {
@@ -380,63 +379,54 @@ public enum OrdinaryInstruction implements Instruction {
 	},
 	SIGNATURE_CHECK {
 		public void execute(ScriptStack stack) throws ScriptException {
-			try {
-				KeyFactory keyFactoryEC = KeyFactory.getInstance("EC");
-				ECPublicKey publicKey = (ECPublicKey) keyFactoryEC.generatePublic(new X509EncodedKeySpec(stack.pop().data()));
+			ByteArray publicKey = stack.pop();
+			ByteArray signature = stack.pop();
+			Hash hash = stack.dataToSign();
 
-				Signature sig = Signature.getInstance("SHA256withECDSA");
-				sig.initVerify(publicKey);
-				sig.update(stack.dataToSign().data());
-
-				boolean verified = sig.verify(stack.pop().data());
-				stack.push(ByteArray.fromInt(verified ? 1 : 0));
-
-			} catch (InvalidKeySpecException | NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-				throw new ScriptException.InvalidScriptException("EC not supported", e);
-            }
+			boolean verified = checkSignature(signature, publicKey, hash);
+			stack.push(ByteArray.fromInt(verified ? 1 : 0));
         }
 	},
 	SIGNATURE_CHECK_VERIFY {
 		public void execute(ScriptStack stack) throws ScriptException {
-			try {
-				KeyFactory keyFactoryEC = KeyFactory.getInstance("EC");
-				ECPublicKey publicKey = (ECPublicKey) keyFactoryEC.generatePublic(new X509EncodedKeySpec(stack.pop().data()));
+			ByteArray publicKey = stack.pop();
+			ByteArray signature = stack.pop();
+			Hash hash = stack.dataToSign();
 
-				Signature sig = Signature.getInstance("SHA256withECDSA");
-				sig.initVerify(publicKey);
-				sig.update(stack.dataToSign().data());
-
-				boolean verified = sig.verify(stack.pop().data());
-				if (!verified) {
-					throw new ScriptException.VerificationException("Signature does not match!!!!!");
-				}
-
-			} catch (InvalidKeySpecException | NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-				throw new ScriptException.InvalidScriptException("EC not supported", e);
-			}
+			boolean verified = checkSignature(signature, publicKey, hash);
+			if (!verified)
+				throw new ScriptException.VerificationException("Signature does not match!!!!!");
 		}
 	},
-	SIGNATURE_CHECK_ADD{
+	SIGNATURE_CHECK_ADD {
 		public void execute(ScriptStack stack) throws ScriptException {
-			try {
-				KeyFactory keyFactoryEC = KeyFactory.getInstance("EC");
-				ECPublicKey publicKey = (ECPublicKey) keyFactoryEC.generatePublic(new X509EncodedKeySpec(stack.pop().data()));
+			ByteArray publicKey = stack.pop();
+			int n = stack.pop().toInt();
+			ByteArray signature = stack.pop();
+			Hash hash = stack.dataToSign();
 
-				int n = stack.pop().toInt();
-
-				Signature sig = Signature.getInstance("SHA256withECDSA");
-				sig.initVerify(publicKey);
-				sig.update(stack.dataToSign().data());
-
-				boolean verified = sig.verify(stack.pop().data());
-				stack.push(ByteArray.fromInt(verified ? n + 1 : n));
-
-			} catch (InvalidKeySpecException | NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-				throw new ScriptException.InvalidScriptException("EC not supported", e);
-			}
+			boolean verified = checkSignature(signature, publicKey, hash);
+			stack.push(ByteArray.fromInt(verified ? n + 1 : n));
 		}
 	},
 	;
+
+	private static boolean checkSignature(ByteArray signature, ByteArray publicKey, Hash hash) throws ScriptException {
+		try {
+			KeyFactory keyFactoryEC = KeyFactory.getInstance("EC");
+			ECPublicKey ecPublicKey = (ECPublicKey) keyFactoryEC.generatePublic(new X509EncodedKeySpec(publicKey.data()));
+
+			Signature sig = Signature.getInstance("SHA256withECDSA");
+			sig.initVerify(ecPublicKey);
+			sig.update(hash.data());
+
+			return sig.verify(signature.data());
+		} catch (InvalidKeySpecException | NoSuchAlgorithmException | InvalidKeyException e) {
+			throw new ScriptException.InvalidScriptException("EC not supported", e);
+		} catch (SignatureException e) {
+			return false; // this is a mal-formatted signature, not a system failure
+		}
+	}
 
 	public static final byte FIRST_OPCODE = ConditionalBlock.ENDIF_OPCODE + 1;
 

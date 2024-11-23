@@ -75,7 +75,9 @@ public sealed interface Instruction permits LoadInstruction, ConditionalBlock, O
             return null;
         } else {
             // must be an ordinary instruction
-            int ordinal = opcode - OrdinaryInstruction.FIRST_OPCODE;
+            int ordinal = Byte.toUnsignedInt(opcode) - OrdinaryInstruction.FIRST_OPCODE;
+            if (ordinal > OrdinaryInstruction.values().length)
+                throw new ScriptException.InvalidScriptException("Invalid opcode: " + opcode);
             return OrdinaryInstruction.values()[ordinal];
         }
     }

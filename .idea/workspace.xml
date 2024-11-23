@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf419107-53e9-4db8-a21e-a68003ceef08" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/currycoin/BlockHeader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/BlockHeader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/currycoin/script/instructions/Instruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/instructions/Instruction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/currycoin/script/instructions/LoadInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/instructions/LoadInstruction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/currycoin/script/instructions/OrdinaryInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/instructions/OrdinaryInstruction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +22,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="Record" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -48,7 +53,12 @@
     "git-widget-placeholder": "db7782c0",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/tim/programming/java/currycoin",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "reference.projectsettings.compiler.javacompiler",
     "vue.rearranger.settings.migration": "true"
   }
@@ -77,6 +87,7 @@
       <updated>1732157521983</updated>
       <workItem from="1732157523035" duration="1000" />
       <workItem from="1732300730455" duration="4623000" />
+      <workItem from="1732351075464" duration="5917000" />
     </task>
     <servers />
   </component>
