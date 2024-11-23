@@ -26,6 +26,7 @@ public abstract sealed class ScriptException extends RuntimeException {
 			super(message, cause);
 		}
 	}
+
 	public static final class StackUnderflowException extends ScriptException {
 		public StackUnderflowException(String message) {
 			super(message);
@@ -39,6 +40,7 @@ public abstract sealed class ScriptException extends RuntimeException {
 			super(message, cause);
 		}
 	}
+
 	public static final class VerificationException extends ScriptException {
 		public VerificationException(String message) {
 			super(message);
