@@ -208,13 +208,13 @@ public enum OrdinaryInstruction implements Instruction {
 			if (!first.equals(second)) throw new ScriptException.VerificationException("VERIFY_BYTES_EQUAL failed");
 		}
 	},
-	ARITHMETIC_ADD1 {
+	ARITHMETIC_ADD_1 {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int val = stack.pop().toInt();
 			stack.push(ByteArray.fromInt(++val));
 		}
 	},
-	ARITHMETIC_SUB1 {
+	ARITHMETIC_SUB_1 {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int val = stack.pop().toInt();
 			stack.push(ByteArray.fromInt(--val));
@@ -239,7 +239,7 @@ public enum OrdinaryInstruction implements Instruction {
 			stack.push(ByteArray.fromInt(boolVal ? 1 : 0));
 		}
 	},
-	ARITHMETIC_0NOTEQUAL {
+	ARITHMETIC_0_NOT_EQUAL {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int val = stack.pop().toInt();
 			boolean boolVal = (val != 0);
@@ -260,28 +260,28 @@ public enum OrdinaryInstruction implements Instruction {
 			stack.push(ByteArray.fromInt(second - first));
 		}
 	},
-	ARITHMETIC_BOOLAND {
+	ARITHMETIC_BOOL_AND {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int first = stack.pop().toInt();
 			int second = stack.pop().toInt();
 			stack.push(ByteArray.fromInt((first != 0 && second != 0) ? 1 : 0));
 		}
 	},
-	ARITHMETIC_BOOLOR {
+	ARITHMETIC_BOOL_OR {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int first = stack.pop().toInt();
 			int second = stack.pop().toInt();
 			stack.push(ByteArray.fromInt((first != 0 || second != 0) ? 1 : 0));
 		}
 	},
-	ARITHMETIC_NUMEQUAL {
+	ARITHMETIC_NUM_EQUAL {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int first = stack.pop().toInt();
 			int second = stack.pop().toInt();
 			stack.push(ByteArray.fromInt((first == second) ? 1 : 0));
 		}
 	},
-	ARITHMETIC_NUMEQUALVERIFY {
+	ARITHMETIC_NUM_EQUAL_VERIFY {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int first = stack.pop().toInt();
 			int second = stack.pop().toInt();
@@ -289,35 +289,35 @@ public enum OrdinaryInstruction implements Instruction {
 			if (first != second) throw new ScriptException.VerificationException("ARITHMETIC_NUMEQUALVERIFY failed");
 		}
 	},
-	ARITHMETIC_NUMNOTEQUAL {
+	ARITHMETIC_NUM_NOT_EQUAL {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int first = stack.pop().toInt();
 			int second = stack.pop().toInt();
 			stack.push(ByteArray.fromInt((first != second) ? 1 : 0));
 		}
 	},
-	ARITHMETIC_LESSTHAN {
+	ARITHMETIC_LESS_THAN {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int first = stack.pop().toInt();
 			int second = stack.pop().toInt();
 			stack.push(ByteArray.fromInt((second < first) ? 1 : 0));
 		}
 	},
-	ARITHMETIC_GREATERTHAN {
+	ARITHMETIC_GREATER_THAN {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int first = stack.pop().toInt();
 			int second = stack.pop().toInt();
 			stack.push(ByteArray.fromInt((second > first) ? 1 : 0));
 		}
 	},
-	ARITHMETIC_LESSTHANOREQUAL {
+	ARITHMETIC_LESS_THAN_OR_EQUAL {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int first = stack.pop().toInt();
 			int second = stack.pop().toInt();
 			stack.push(ByteArray.fromInt((second <= first) ? 1 : 0));
 		}
 	},
-	ARITHMETIC_GREATERTHANOREQUAL {
+	ARITHMETIC_GREATER_THAN_OR_EQUAL {
 		public void execute(ScriptStack stack) throws ScriptException {
 			int first = stack.pop().toInt();
 			int second = stack.pop().toInt();
@@ -348,33 +348,35 @@ public enum OrdinaryInstruction implements Instruction {
 	},
 	HASH_SHA256 {
 		public void execute(ScriptStack stack) throws ScriptException {
-			ByteArray value = stack.pop();
-			ByteArray byteArray;
 			try {
+				ByteArray value = stack.pop();
+
 				MessageDigest digest = MessageDigest.getInstance("SHA-256");
 				value.addToDigest(digest);
-				byteArray = new ByteArray(digest.digest());
+
+				stack.push(new ByteArray(digest.digest()));
 			} catch (NoSuchAlgorithmException e) {
 				throw new ScriptException.InvalidScriptException("SHA-256 not supported", e);
 			}
-			stack.push(byteArray);
 		}
 	},
 	HASH_TWICE_SHA256 {
 		public void execute(ScriptStack stack) throws ScriptException {
-			ByteArray value = stack.pop();
-			ByteArray byteArray;
 			try {
+				ByteArray value = stack.pop();
+
 				MessageDigest digest = MessageDigest.getInstance("SHA-256");
 				value.addToDigest(digest);
-				value.addToDigest(digest);
-				byteArray = new ByteArray(digest.digest());
+				MessageDigest digest2 = MessageDigest.getInstance("SHA-256");
+				digest2.update(digest.digest());
+
+				stack.push(new ByteArray(digest2.digest()));
 			} catch (NoSuchAlgorithmException e) {
 				throw new ScriptException.InvalidScriptException("SHA-256 not supported", e);
 			}
-			stack.push(byteArray);
 		}
-	};
+	},
+	;
 
 	public static final byte FIRST_OPCODE = ConditionalBlock.ENDIF_OPCODE + 1;
 

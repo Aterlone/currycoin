@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bf419107-53e9-4db8-a21e-a68003ceef08" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/currycoin/script/ByteArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/ByteArray.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/Script.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/Script.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/ScriptException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/ScriptException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/ScriptStack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/ScriptStack.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/instructions/ConditionalBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/instructions/ConditionalBlock.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/instructions/Instruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/instructions/Instruction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/instructions/LoadInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/instructions/LoadInstruction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/currycoin/script/instructions/OrdinaryInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/instructions/OrdinaryInstruction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

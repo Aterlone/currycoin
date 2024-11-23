@@ -33,7 +33,7 @@ public record ByteArray(byte[] data) {
 
 	public int toInt() {
 		if (data.length > 4) {
-			throw new IllegalArgumentException("Data is too long to be an integer");
+			throw new ScriptException.VerificationException("Data is too long to be an integer");
 		}
 
 		if (data.length == 0) {
