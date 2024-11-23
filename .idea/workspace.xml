@@ -7,12 +7,7 @@
     <list default="true" id="bf419107-53e9-4db8-a21e-a68003ceef08" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/Hash.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/Hash.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/ByteArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/ByteArray.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/Script.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/Script.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/ScriptStack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/ScriptStack.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/currycoin/script/instructions/LoadInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/instructions/LoadInstruction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/currycoin/script/instructions/OrdinaryInstruction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/currycoin/script/instructions/OrdinaryInstruction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +46,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "ced75366",
+    "git-widget-placeholder": "ce50c4df",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/tim/programming/java/currycoin",
     "node.js.selected.package.tslint": "(autodetect)",

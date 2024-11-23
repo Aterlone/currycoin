@@ -3,6 +3,8 @@ package currycoin.script.instructions;
 import currycoin.script.ByteArray;
 import currycoin.script.ScriptStack;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -237,7 +239,7 @@ public enum OrdinaryInstruction implements Instruction {
 		int first = stack.pop().toInt();
 		int second = stack.pop().toInt();
 		stack.push(ByteArray.fromInt((first == second) ? 1 : 0));
-		return first == second;
+		return first != 0;
 	}),
 	ARITHMETIC_NUMNOTEQUAL(stack -> {
 		int first = stack.pop().toInt();
@@ -248,46 +250,115 @@ public enum OrdinaryInstruction implements Instruction {
 	ARITHMETIC_LESSTHAN(stack -> {
 		int first = stack.pop().toInt();
 		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first < second) ? 1 : 0));
+		stack.push(ByteArray.fromInt((second < first) ? 1 : 0));
 		return true;
 	}),
 	ARITHMETIC_GREATERTHAN(stack -> {
 		int first = stack.pop().toInt();
 		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first > second) ? 1 : 0));
+		stack.push(ByteArray.fromInt((second > first) ? 1 : 0));
 		return true;
 	}),
 	ARITHMETIC_LESSTHANOREQUAL(stack -> {
 		int first = stack.pop().toInt();
 		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first <= second) ? 1 : 0));
+		stack.push(ByteArray.fromInt((second <= first) ? 1 : 0));
 		return true;
 	}),
 	ARITHMETIC_GREATERTHANOREQUAL(stack -> {
 		int first = stack.pop().toInt();
 		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first >= second) ? 1 : 0));
+		stack.push(ByteArray.fromInt((second >= first) ? 1 : 0));
 		return true;
 	}),
 	ARITHMETIC_MIN(stack -> {
 		int first = stack.pop().toInt();
 		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(min(first, second)));
+		stack.push(ByteArray.fromInt(min(second, first)));
 		return true;
 	}),
 	ARITHMETIC_MAX(stack -> {
 		int first = stack.pop().toInt();
 		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(max(first, second)));
+		stack.push(ByteArray.fromInt(max(second, first)));
 		return true;
 	}),
 	ARITHMETIC_WITHIN(stack -> {
-		int first = stack.pop().toInt();
-		int min = stack.pop().toInt();
 		int max = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first >= min && first < max) ? 1 : 0));
+		int min = stack.pop().toInt();
+		int value = stack.pop().toInt();
+		stack.push(ByteArray.fromInt((value >= min && value <= max) ? 1 : 0));
 		return true;
-	});
+	}),
+//	CRYPTO_RIPEMD160(stack -> {
+//		ByteArray value = stack.pop();
+//		ByteArray byteArray;
+//        try {
+//            MessageDigest digest = MessageDigest.getInstance("RIPEMD-160");
+//			digest.update(value.data());
+//			byteArray = new ByteArray(digest.digest());
+//        } catch (NoSuchAlgorithmException e) {
+//            throw new RuntimeException(e);
+//        }
+//        stack.push(byteArray);
+//		return true;
+//	}),
+//	CRYPTO_SHA1(stack -> {
+//		ByteArray value = stack.pop();
+//		ByteArray byteArray;
+//		try {
+//			MessageDigest digest = MessageDigest.getInstance("SHA-1");
+//			digest.update(value.data());
+//			byteArray = new ByteArray(digest.digest());
+//		} catch (NoSuchAlgorithmException e) {
+//			throw new RuntimeException(e);
+//		}
+//		stack.push(byteArray);
+//		return true;
+//	}),
+//	CRYPTO_SHA256(stack -> {
+//		ByteArray value = stack.pop();
+//		ByteArray byteArray;
+//		try {
+//			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+//			digest.update(value.data());
+//			byteArray = new ByteArray(digest.digest());
+//		} catch (NoSuchAlgorithmException e) {
+//			throw new RuntimeException(e);
+//		}
+//		stack.push(byteArray);
+//		return true;
+//	}),
+//	CRYPTO_HASH160(stack -> {
+//		ByteArray value = stack.pop();
+//		ByteArray byteArray;
+//		try {
+//			MessageDigest digest = MessageDigest.getInstance("RIPEMD-160");
+//			digest.update(value.data());
+//			byteArray = digest.digest();
+//			MessageDigest digest = MessageDigest.getInstance("RIPEMD-160");
+//			digest.update(value.data());
+//		} catch (NoSuchAlgorithmException e) {
+//			throw new RuntimeException(e);
+//		}
+//		stack.push(byteArray);
+//		return true;
+//	}),
+//	CRYPTO_HASH256(stack -> {
+//		ByteArray value = stack.pop();
+//		ByteArray byteArray;
+//		try {
+//			MessageDigest digest = MessageDigest.getInstance("RIPEMD-160");
+//			digest.update(value.data());
+//			byteArray = new ByteArray(digest.digest());
+//		} catch (NoSuchAlgorithmException e) {
+//			throw new RuntimeException(e);
+//		}
+//		stack.push(byteArray);
+//		return true;
+//	}),
+
+	;
 
 	public static final byte FIRST_OPCODE = ConditionalBlock.ENDIF_OPCODE + 1;
 
