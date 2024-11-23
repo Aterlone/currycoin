@@ -39,7 +39,7 @@ public sealed interface Instruction permits LoadInstruction, ConditionalBlock, O
             }
 
             buffer.mark();
-            if (buffer.get() != ConditionalBlock.ELSE_OPCODE) {
+            if (!buffer.hasRemaining() || buffer.get() != ConditionalBlock.ELSE_OPCODE) {
                 buffer.reset();
                 return new ConditionalBlock(whenTrue, List.of());
             } else {
@@ -57,7 +57,7 @@ public sealed interface Instruction permits LoadInstruction, ConditionalBlock, O
             }
 
             buffer.mark();
-            if (buffer.get() != ConditionalBlock.ELSE_OPCODE) {
+            if (!buffer.hasRemaining() || buffer.get() != ConditionalBlock.ELSE_OPCODE) {
                 buffer.reset();
                 return new ConditionalBlock(List.of(), whenFalse);
             } else {
