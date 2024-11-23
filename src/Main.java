@@ -6,15 +6,18 @@ import currycoin.script.ScriptStack;
 import currycoin.script.instructions.*;
 
 import java.nio.ByteBuffer;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 
 import static currycoin.script.instructions.LoadInstruction.loadInt;
+import static currycoin.script.instructions.LoadInstruction.ofData;
 import static currycoin.script.instructions.OrdinaryInstruction.*;
 
 public class Main {
 
-	public static void main(String[] args) throws NoSuchAlgorithmException {
+	public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException {
 		MessageDigest mess = MessageDigest.getInstance("SHA-256");
 		mess.update("Hi".getBytes());
 		Hash prevHash = new Hash(mess.digest());
@@ -23,12 +26,30 @@ public class Main {
 		Hash transHash = new Hash(mess.digest());
 
 		BlockHeader block = new BlockHeader(prevHash, transHash,3);
-		System.out.println(block);
-		System.out.println(block.hash());
+//		System.out.println(block);
+//		System.out.println(block.hash());
 
-		// testing script
-		ScriptStack stack = new ScriptStack(Hash.empty());
+
+
+		KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("EC");
+//		keyPairGen.initialize(256);
+		KeyPair pair = keyPairGen.generateKeyPair();
+
+		PrivateKey privKey = pair.getPrivate();
+		PublicKey publicKey = pair.getPublic();
+
+		ByteArray publicKeyBytes = new ByteArray(publicKey.getEncoded());
+		getW
+
+		Hash hash = Hash.empty();
+
+		ScriptStack stack = new ScriptStack(hash);
 		System.out.println(stack);
+
+		Signature sig = Signature.getInstance("SHA256withECDSA");
+		sig.initSign(privKey);
+		sig.update(hash.data());
+		ByteArray signatureBytes = new ByteArray(sig.sign());
 
 		Script script = Script.of(
 				loadInt(0xABCD),
@@ -38,7 +59,10 @@ public class Main {
 				ARITHMETIC_ADD,
 				ROTATE_THREE,
 				ROTATE_THREE,
-				ARITHMETIC_SUB
+				ARITHMETIC_SUB,
+				ofData(signatureBytes),
+				ofData(publicKeyBytes),
+				SIGNATURE_CHECK
 		);
 
 		ByteBuffer buffer = ByteBuffer.allocate(script.byteSize());
