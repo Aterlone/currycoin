@@ -27,7 +27,7 @@ public class Main {
 		System.out.println(block.hash());
 
 		// testing script
-		ScriptStack stack = new ScriptStack();
+		ScriptStack stack = new ScriptStack(Hash.empty());
 		System.out.println(stack);
 
 		Script script = Script.of(

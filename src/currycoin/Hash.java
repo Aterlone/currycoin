@@ -35,4 +35,10 @@ public record Hash(byte[] data) {
         }
         return hex.toString();
     }
+
+    private static final Hash EMPTY = new Hash(new byte[32]);
+
+    public static Hash empty() {
+        return EMPTY;
+    }
 }

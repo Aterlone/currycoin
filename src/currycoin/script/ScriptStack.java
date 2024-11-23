@@ -1,11 +1,18 @@
 package currycoin.script;
 
+import currycoin.Hash;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.NoSuchElementException;
 
 public class ScriptStack {
     private final Deque<ByteArray> stack = new ArrayDeque<>();
+    private final Hash dataToSign;
+
+    public ScriptStack(Hash dataToSign) {
+        this.dataToSign = dataToSign;
+    }
 
     public void push(ByteArray byteArray) throws ScriptException {
         stack.push(byteArray);
@@ -40,4 +47,7 @@ public class ScriptStack {
         return builder.toString();
     }
 
+    public Hash dataToSign() {
+        return dataToSign;
+    }
 }
