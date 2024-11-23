@@ -421,9 +421,9 @@ public enum OrdinaryInstruction implements Instruction {
 			sig.update(hash.data());
 
 			return sig.verify(signature.data());
-		} catch (InvalidKeySpecException | NoSuchAlgorithmException | InvalidKeyException e) {
+		} catch (NoSuchAlgorithmException | InvalidKeyException e) {
 			throw new ScriptException.InvalidScriptException("EC not supported", e);
-		} catch (SignatureException e) {
+		} catch (InvalidKeySpecException | SignatureException e) {
 			return false; // this is a mal-formatted signature, not a system failure
 		}
 	}

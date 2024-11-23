@@ -38,7 +38,7 @@ public class ScriptStack {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder("Size: " + stack.size());
+        StringBuilder builder = new StringBuilder("Stack Size: " + stack.size());
 
         for (ByteArray byteArray : stack.reversed()) {
             builder.append("\n");

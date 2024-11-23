@@ -2,6 +2,7 @@ import currycoin.BlockHeader;
 import currycoin.Hash;
 import currycoin.script.ByteArray;
 import currycoin.script.Script;
+import currycoin.script.ScriptException;
 import currycoin.script.ScriptStack;
 import currycoin.script.instructions.*;
 
@@ -76,22 +77,53 @@ public class Main {
 		System.out.println("\n\nsuccessful; testing tampered signature now\n");
 
 		// try tampering with the signature
-		byte[] tampered = signatureBytes.data();
-		tampered[0]++;
-		ByteArray tamperedSignatureBytes = new ByteArray(tampered);
+		try {
+			byte[] tampered = signatureBytes.data();
+			tampered[0]++;
+			ByteArray tamperedSignatureBytes = new ByteArray(tampered);
 
-		Script tamperedScript = Script.of(
-				ofData(tamperedSignatureBytes),
-				ofData(publicKeyBytes),
-				SIGNATURE_CHECK_VERIFY
-		);
+			Script tamperedScript = Script.of(
+					ofData(tamperedSignatureBytes),
+					ofData(publicKeyBytes),
+					SIGNATURE_CHECK_VERIFY
+			);
 
-		stack = new ScriptStack(hash);
+			stack = new ScriptStack(hash);
 
-		for (Instruction instruction : tamperedScript.instructions()) {
-			System.out.println("\nexecuting " + instruction);
-			instruction.execute(stack);
-			System.out.println(stack);
+			for (Instruction instruction : tamperedScript.instructions()) {
+				System.out.println("\nexecuting " + instruction);
+				instruction.execute(stack);
+				System.out.println(stack);
+			}
+		} catch (ScriptException.VerificationException e) {
+			System.out.println("Verification Exception: " + e.getMessage());
+		}
+
+		System.out.println("\n\nsuccessful; testing tampered pubkey now\n");
+
+		// try tampering with the pubkey
+		try {
+			byte[] tampered = publicKeyBytes.data();
+			tampered[0]++;
+			ByteArray tamperedPublicKeyBytes = new ByteArray(tampered);
+
+			Script tamperedScript = Script.of(
+					ofData(signatureBytes),
+					ofData(tamperedPublicKeyBytes),
+					SIGNATURE_CHECK,
+					ARITHMETIC_NOT,
+					VERIFY
+			);
+
+			stack = new ScriptStack(hash);
+
+			for (Instruction instruction : tamperedScript.instructions()) {
+				System.out.println("\nexecuting " + instruction);
+				instruction.execute(stack);
+				System.out.println(stack);
+			}
+		} catch (ScriptException.VerificationException e) {
+			System.out.println("Verification Exception: " + e.getMessage());
 		}
 	}
 }
