@@ -1,6 +1,7 @@
 package currycoin.script.instructions;
 
 import currycoin.script.ByteArray;
+import currycoin.script.ScriptException;
 import currycoin.script.ScriptStack;
 
 import java.nio.ByteBuffer;
@@ -12,366 +13,373 @@ import java.util.stream.Stream;
 import static java.lang.Math.*;
 
 public enum OrdinaryInstruction implements Instruction {
-	PUSH_1(stack -> {
-		stack.push(ByteArray.fromInt(-1));
-		return true;
-	}),
-	PUSH_NEGATIVE_1(stack -> {
-		stack.push(ByteArray.fromInt(-1));
-		return true;
-	}),
-	NO_OPERATION(stack -> true),
-	VERIFY(stack -> stack.pop().asBoolean()),
-	RETURN_FAIL(stack -> false),
-	DUPLICATE_CONDITIONAL(stack -> {
-		ByteArray value = stack.peek();
-		if (value.asBoolean()) stack.push(value);
-		return true;
-	}),
-	GET_STACK_DEPTH(stack -> {
-		stack.push(ByteArray.fromInt(stack.depth()));
-		return true;
-	}),
-	DROP_ITEM(stack -> {
-		stack.pop();
-		return true;
-	}),
-	DUPLICATE_ITEM(stack -> {
-		stack.push(stack.peek());
-		return true;
-	}),
-	REMOVE_SECOND(stack -> {
-		ByteArray value = stack.pop();
-		stack.pop();
-		stack.push(value);
-		return true;
-	}),
-	COPY_SECOND(stack -> {
-		ByteArray top = stack.pop();
-		ByteArray second = stack.peek();
-		stack.push(top);
-		stack.push(second);
-		return true;
-	}),
-	COPY_ITEM(stack -> {
-		int index = stack.peek().toInt();
-		var removed = Stream.generate(stack::pop).limit(index + 1).toList();
-		ByteArray selected = stack.peek(); // keep the old one too
-		removed.reversed().forEach(stack::push);
-		stack.push(selected);
-		return true;
-	}),
-	ROLL_ITEM(stack -> {
-		int index = stack.peek().toInt();
-		var removed = Stream.generate(stack::pop).limit(index + 1).toList();
-		ByteArray selected = stack.pop(); // remove it
-		removed.reversed().forEach(stack::push);
-		stack.push(selected);
-		return true;
-	}),
-	ROTATE_THREE(stack -> {
-		ByteArray first = stack.pop();
-		ByteArray second = stack.pop();
-		ByteArray third = stack.pop();
-		stack.push(second);
-		stack.push(first);
-		stack.push(third);
-		return true;
-	}),
-	SWAP_TWO(stack -> {
-		ByteArray first = stack.pop();
-		ByteArray second = stack.pop();
-		stack.push(first);
-		stack.push(second);
-		return true;
-	}),
-	TUCK(stack -> {
-		ByteArray top = stack.pop();
-		ByteArray second = stack.pop();
-		stack.push(top);
-		stack.push(second);
-		stack.push(top);
-		return true;
-	}),
-	DROP_TWO(stack -> {
-		stack.pop();
-		stack.pop();
-		return true;
-	}),
-	DUPLICATE_TWO(stack -> {
-		ByteArray first = stack.pop();
-		ByteArray second = stack.pop();
-		stack.push(second);
-		stack.push(first);
-		stack.push(second);
-		stack.push(first);
-		return true;
-	}),
-	DUPLICATE_THREE(stack -> {
-		ByteArray first = stack.pop();
-		ByteArray second = stack.pop();
-		ByteArray third = stack.pop();
-		stack.push(third);
-		stack.push(second);
-		stack.push(first);
-		stack.push(third);
-		stack.push(second);
-		stack.push(first);
-		return true;
-	}),
-	COPY_SECOND_PAIR(stack -> {
-		ByteArray first = stack.pop();
-		ByteArray second = stack.pop();
-		ByteArray third = stack.pop();
-		ByteArray fourth = stack.pop();
-		stack.push(fourth);
-		stack.push(third);
-		stack.push(second);
-		stack.push(first);
-		stack.push(fourth);
-		stack.push(third);
-		return true;
-	}),
-	ROTATE_THREE_PAIRS(stack -> {
-		ByteArray first = stack.pop();
-		ByteArray second = stack.pop();
-		ByteArray third = stack.pop();
-		ByteArray fourth = stack.pop();
-		ByteArray fifth = stack.pop();
-		ByteArray sixth = stack.pop();
-		stack.push(fourth);
-		stack.push(third);
-		stack.push(second);
-		stack.push(first);
-		stack.push(sixth);
-		stack.push(fifth);
-		return true;
-	}),
-	SWAP_TWO_PAIRS(stack -> {
-		ByteArray first = stack.pop();
-		ByteArray second = stack.pop();
-		ByteArray third = stack.pop();
-		ByteArray fourth = stack.pop();
-		stack.push(second);
-		stack.push(first);
-		stack.push(fourth);
-		stack.push(third);
-		return true;
-	}),
-	GET_ITEM_SIZE(stack -> {
-		stack.push(ByteArray.fromInt(stack.peek().length()));
-		return true;
-	}),
-	BYTES_EQUAL(stack -> {
-		ByteArray first = stack.pop();
-		ByteArray second = stack.pop();
-		int result = first.equals(second) ? 1 : 0;
-		stack.push(ByteArray.fromInt(result));
-		return true;
-	}),
-	VERIFY_BYTES_EQUAL(stack -> {
-		ByteArray first = stack.pop();
-		ByteArray second = stack.pop();
-		return first.equals(second);
-	}),
-	ARITHMETIC_ADD1(stack -> {
-		int val = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(++val));
-		return true;
-	}),
-	ARITHMETIC_SUB1(stack -> {
-		int val = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(--val));
-		return true;
-	}),
-	ARITHMETIC_NEG(stack -> {
-		int val = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(-1 * val));
-		return true;
-	}),
-	ARITHMETIC_ABS(stack -> {
-		int val = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(abs(val)));
-		return true;
-	}),
-	ARITHMETIC_NOT(stack -> {
-		int val = stack.pop().toInt();
-		boolean boolVal = (val == 0);
-		stack.push(ByteArray.fromInt(boolVal ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_0NOTEQUAL(stack -> {
-		int val = stack.pop().toInt();
-		boolean boolVal = (val != 0);
-		stack.push(ByteArray.fromInt(boolVal ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_ADD(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(second + first));
-		return true;
-	}),
-	ARITHMETIC_SUB(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(second - first));
-		return true;
-	}),
-	ARITHMETIC_BOOLAND(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first != 0 && second != 0) ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_BOOLOR(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first != 0 || second != 0) ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_NUMEQUAL(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first == second) ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_NUMEQUALVERIFY(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first == second) ? 1 : 0));
-		return first != 0;
-	}),
-	ARITHMETIC_NUMNOTEQUAL(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((first != second) ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_LESSTHAN(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((second < first) ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_GREATERTHAN(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((second > first) ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_LESSTHANOREQUAL(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((second <= first) ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_GREATERTHANOREQUAL(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((second >= first) ? 1 : 0));
-		return true;
-	}),
-	ARITHMETIC_MIN(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(min(second, first)));
-		return true;
-	}),
-	ARITHMETIC_MAX(stack -> {
-		int first = stack.pop().toInt();
-		int second = stack.pop().toInt();
-		stack.push(ByteArray.fromInt(max(second, first)));
-		return true;
-	}),
-	ARITHMETIC_WITHIN(stack -> {
-		int max = stack.pop().toInt();
-		int min = stack.pop().toInt();
-		int value = stack.pop().toInt();
-		stack.push(ByteArray.fromInt((value >= min && value <= max) ? 1 : 0));
-		return true;
-	}),
-//	CRYPTO_RIPEMD160(stack -> {
-//		ByteArray value = stack.pop();
-//		ByteArray byteArray;
-//        try {
-//            MessageDigest digest = MessageDigest.getInstance("RIPEMD-160");
-//			digest.update(value.data());
-//			byteArray = new ByteArray(digest.digest());
-//        } catch (NoSuchAlgorithmException e) {
-//            throw new RuntimeException(e);
-//        }
-//        stack.push(byteArray);
-//		return true;
-//	}),
-//	CRYPTO_SHA1(stack -> {
-//		ByteArray value = stack.pop();
-//		ByteArray byteArray;
-//		try {
-//			MessageDigest digest = MessageDigest.getInstance("SHA-1");
-//			digest.update(value.data());
-//			byteArray = new ByteArray(digest.digest());
-//		} catch (NoSuchAlgorithmException e) {
-//			throw new RuntimeException(e);
-//		}
-//		stack.push(byteArray);
-//		return true;
-//	}),
-//	CRYPTO_SHA256(stack -> {
-//		ByteArray value = stack.pop();
-//		ByteArray byteArray;
-//		try {
-//			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-//			digest.update(value.data());
-//			byteArray = new ByteArray(digest.digest());
-//		} catch (NoSuchAlgorithmException e) {
-//			throw new RuntimeException(e);
-//		}
-//		stack.push(byteArray);
-//		return true;
-//	}),
-//	CRYPTO_HASH160(stack -> {
-//		ByteArray value = stack.pop();
-//		ByteArray byteArray;
-//		try {
-//			MessageDigest digest = MessageDigest.getInstance("RIPEMD-160");
-//			digest.update(value.data());
-//			byteArray = digest.digest();
-//			MessageDigest digest = MessageDigest.getInstance("RIPEMD-160");
-//			digest.update(value.data());
-//		} catch (NoSuchAlgorithmException e) {
-//			throw new RuntimeException(e);
-//		}
-//		stack.push(byteArray);
-//		return true;
-//	}),
-//	CRYPTO_HASH256(stack -> {
-//		ByteArray value = stack.pop();
-//		ByteArray byteArray;
-//		try {
-//			MessageDigest digest = MessageDigest.getInstance("RIPEMD-160");
-//			digest.update(value.data());
-//			byteArray = new ByteArray(digest.digest());
-//		} catch (NoSuchAlgorithmException e) {
-//			throw new RuntimeException(e);
-//		}
-//		stack.push(byteArray);
-//		return true;
-//	}),
-
-	;
+	PUSH_1 {
+		public void execute(ScriptStack stack) throws ScriptException {
+			stack.push(ByteArray.fromInt(-1));
+		}
+	},
+	PUSH_NEGATIVE_1 {
+		public void execute(ScriptStack stack) throws ScriptException {
+			stack.push(ByteArray.fromInt(-1));
+		}
+	},
+	NO_OPERATION {
+		public void execute(ScriptStack stack) throws ScriptException { }
+	},
+	VERIFY {
+		public void execute(ScriptStack stack) throws ScriptException {
+			if (!stack.pop().asBoolean()) throw new ScriptException.VerificationException("VERIFY failed");
+		}
+	},
+	RETURN_FAIL {
+		public void execute(ScriptStack stack) throws ScriptException {
+			throw new ScriptException.VerificationException("Script threw RETURN_FAIL");
+		}
+	},
+	DUPLICATE_CONDITIONAL {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray value = stack.peek();
+			if (value.asBoolean()) stack.push(value);
+		}
+	},
+	GET_STACK_DEPTH {
+		public void execute(ScriptStack stack) throws ScriptException {
+			stack.push(ByteArray.fromInt(stack.depth()));
+		}
+	},
+	DROP_ITEM {
+		public void execute(ScriptStack stack) throws ScriptException {
+			stack.pop();
+		}
+	},
+	DUPLICATE_ITEM {
+		public void execute(ScriptStack stack) throws ScriptException {
+			stack.push(stack.peek());
+		}
+	},
+	REMOVE_SECOND {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray value = stack.pop();
+			stack.pop();
+			stack.push(value);
+		}
+	},
+	COPY_SECOND {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray top = stack.pop();
+			ByteArray second = stack.peek();
+			stack.push(top);
+			stack.push(second);
+		}
+	},
+	COPY_ITEM {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int index = stack.peek().toInt();
+			var removed = Stream.generate(stack::pop).limit(index + 1).toList();
+			ByteArray selected = stack.peek(); // keep the old one too
+			removed.reversed().forEach(stack::push);
+			stack.push(selected);
+		}
+	},
+	ROLL_ITEM {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int index = stack.peek().toInt();
+			var removed = Stream.generate(stack::pop).limit(index + 1).toList();
+			ByteArray selected = stack.pop(); // remove it
+			removed.reversed().forEach(stack::push);
+			stack.push(selected);
+		}
+	},
+	ROTATE_THREE {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray first = stack.pop();
+			ByteArray second = stack.pop();
+			ByteArray third = stack.pop();
+			stack.push(second);
+			stack.push(first);
+			stack.push(third);
+		}
+	},
+	SWAP_TWO {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray first = stack.pop();
+			ByteArray second = stack.pop();
+			stack.push(first);
+			stack.push(second);
+		}
+	},
+	TUCK {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray top = stack.pop();
+			ByteArray second = stack.pop();
+			stack.push(top);
+			stack.push(second);
+			stack.push(top);
+		}
+	},
+	DROP_TWO {
+		public void execute(ScriptStack stack) throws ScriptException {
+			stack.pop();
+			stack.pop();
+		}
+	},
+	DUPLICATE_TWO {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray first = stack.pop();
+			ByteArray second = stack.pop();
+			stack.push(second);
+			stack.push(first);
+			stack.push(second);
+			stack.push(first);
+		}
+	},
+	DUPLICATE_THREE {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray first = stack.pop();
+			ByteArray second = stack.pop();
+			ByteArray third = stack.pop();
+			stack.push(third);
+			stack.push(second);
+			stack.push(first);
+			stack.push(third);
+			stack.push(second);
+			stack.push(first);
+		}
+	},
+	COPY_SECOND_PAIR {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray first = stack.pop();
+			ByteArray second = stack.pop();
+			ByteArray third = stack.pop();
+			ByteArray fourth = stack.pop();
+			stack.push(fourth);
+			stack.push(third);
+			stack.push(second);
+			stack.push(first);
+			stack.push(fourth);
+			stack.push(third);
+		}
+	},
+	ROTATE_THREE_PAIRS {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray first = stack.pop();
+			ByteArray second = stack.pop();
+			ByteArray third = stack.pop();
+			ByteArray fourth = stack.pop();
+			ByteArray fifth = stack.pop();
+			ByteArray sixth = stack.pop();
+			stack.push(fourth);
+			stack.push(third);
+			stack.push(second);
+			stack.push(first);
+			stack.push(sixth);
+			stack.push(fifth);
+		}
+	},
+	SWAP_TWO_PAIRS {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray first = stack.pop();
+			ByteArray second = stack.pop();
+			ByteArray third = stack.pop();
+			ByteArray fourth = stack.pop();
+			stack.push(second);
+			stack.push(first);
+			stack.push(fourth);
+			stack.push(third);
+		}
+	},
+	GET_ITEM_SIZE {
+		public void execute(ScriptStack stack) throws ScriptException {
+			stack.push(ByteArray.fromInt(stack.peek().length()));
+		}
+	},
+	BYTES_EQUAL {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray first = stack.pop();
+			ByteArray second = stack.pop();
+			int result = first.equals(second) ? 1 : 0;
+			stack.push(ByteArray.fromInt(result));
+		}
+	},
+	VERIFY_BYTES_EQUAL {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray first = stack.pop();
+			ByteArray second = stack.pop();
+			if (!first.equals(second)) throw new ScriptException.VerificationException("VERIFY_BYTES_EQUAL failed");
+		}
+	},
+	ARITHMETIC_ADD1 {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int val = stack.pop().toInt();
+			stack.push(ByteArray.fromInt(++val));
+		}
+	},
+	ARITHMETIC_SUB1 {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int val = stack.pop().toInt();
+			stack.push(ByteArray.fromInt(--val));
+		}
+	},
+	ARITHMETIC_NEG {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int val = stack.pop().toInt();
+			stack.push(ByteArray.fromInt(-1 * val));
+		}
+	},
+	ARITHMETIC_ABS {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int val = stack.pop().toInt();
+			stack.push(ByteArray.fromInt(abs(val)));
+		}
+	},
+	ARITHMETIC_NOT {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int val = stack.pop().toInt();
+			boolean boolVal = (val == 0);
+			stack.push(ByteArray.fromInt(boolVal ? 1 : 0));
+		}
+	},
+	ARITHMETIC_0NOTEQUAL {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int val = stack.pop().toInt();
+			boolean boolVal = (val != 0);
+			stack.push(ByteArray.fromInt(boolVal ? 1 : 0));
+		}
+	},
+	ARITHMETIC_ADD {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt(second + first));
+		}
+	},
+	ARITHMETIC_SUB {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt(second - first));
+		}
+	},
+	ARITHMETIC_BOOLAND {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((first != 0 && second != 0) ? 1 : 0));
+		}
+	},
+	ARITHMETIC_BOOLOR {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((first != 0 || second != 0) ? 1 : 0));
+		}
+	},
+	ARITHMETIC_NUMEQUAL {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((first == second) ? 1 : 0));
+		}
+	},
+	ARITHMETIC_NUMEQUALVERIFY {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((first == second) ? 1 : 0));
+			if (first != second) throw new ScriptException.VerificationException("ARITHMETIC_NUMEQUALVERIFY failed");
+		}
+	},
+	ARITHMETIC_NUMNOTEQUAL {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((first != second) ? 1 : 0));
+		}
+	},
+	ARITHMETIC_LESSTHAN {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((second < first) ? 1 : 0));
+		}
+	},
+	ARITHMETIC_GREATERTHAN {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((second > first) ? 1 : 0));
+		}
+	},
+	ARITHMETIC_LESSTHANOREQUAL {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((second <= first) ? 1 : 0));
+		}
+	},
+	ARITHMETIC_GREATERTHANOREQUAL {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((second >= first) ? 1 : 0));
+		}
+	},
+	ARITHMETIC_MIN {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt(min(second, first)));
+		}
+	},
+	ARITHMETIC_MAX {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int first = stack.pop().toInt();
+			int second = stack.pop().toInt();
+			stack.push(ByteArray.fromInt(max(second, first)));
+		}
+	},
+	ARITHMETIC_WITHIN {
+		public void execute(ScriptStack stack) throws ScriptException {
+			int max = stack.pop().toInt();
+			int min = stack.pop().toInt();
+			int value = stack.pop().toInt();
+			stack.push(ByteArray.fromInt((value >= min && value <= max) ? 1 : 0));
+		}
+	},
+	HASH_SHA256 {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray value = stack.pop();
+			ByteArray byteArray;
+			try {
+				MessageDigest digest = MessageDigest.getInstance("SHA-256");
+				value.addToDigest(digest);
+				byteArray = new ByteArray(digest.digest());
+			} catch (NoSuchAlgorithmException e) {
+				throw new ScriptException.InvalidScriptException("SHA-256 not supported", e);
+			}
+			stack.push(byteArray);
+		}
+	},
+	HASH_TWICE_SHA256 {
+		public void execute(ScriptStack stack) throws ScriptException {
+			ByteArray value = stack.pop();
+			ByteArray byteArray;
+			try {
+				MessageDigest digest = MessageDigest.getInstance("SHA-256");
+				value.addToDigest(digest);
+				value.addToDigest(digest);
+				byteArray = new ByteArray(digest.digest());
+			} catch (NoSuchAlgorithmException e) {
+				throw new ScriptException.InvalidScriptException("SHA-256 not supported", e);
+			}
+			stack.push(byteArray);
+		}
+	};
 
 	public static final byte FIRST_OPCODE = ConditionalBlock.ENDIF_OPCODE + 1;
 
-	private final Function<ScriptStack, Boolean> function;
-	OrdinaryInstruction(Function<ScriptStack, Boolean> function) {
-		this.function = function;
-	}
-
 	@Override
-	public boolean execute(ScriptStack stack) {
-		return function.apply(stack);
-	}
+	public abstract void execute(ScriptStack stack) throws ScriptException;
 
 	@Override
 	public int byteSize() {

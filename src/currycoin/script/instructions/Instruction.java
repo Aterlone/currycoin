@@ -1,24 +1,30 @@
 package currycoin.script.instructions;
 
 import currycoin.script.ByteArray;
+import currycoin.script.ScriptException;
 import currycoin.script.ScriptStack;
 
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 public sealed interface Instruction permits LoadInstruction, ConditionalBlock, OrdinaryInstruction {
-    boolean execute(ScriptStack stack);
+    void execute(ScriptStack stack) throws ScriptException;
     int byteSize();
     void apply(ByteBuffer buffer);
 
-    static Instruction parseFrom(ByteBuffer buffer) {
-        return parseFrom0(buffer, 0);
+    static Instruction parseFrom(ByteBuffer buffer) throws ScriptException.InvalidScriptException {
+        try {
+            return parseFrom0(buffer, 0);
+        } catch (BufferOverflowException e) {
+            throw new ScriptException.InvalidScriptException("Unexpected end of script", e);
+        }
     }
 
-    private static Instruction parseFrom0(ByteBuffer buffer, int depth) {
+    private static Instruction parseFrom0(ByteBuffer buffer, int depth) throws ScriptException.InvalidScriptException {
         if (depth > 20) {
-            throw new IllegalArgumentException("Maximum parsing stack depth exceeded!");
+            throw new ScriptException.InvalidScriptException("Maximum parsing stack depth exceeded!");
         }
         byte opcode = buffer.get();
         if (LoadInstruction.isInRange(opcode)) {
@@ -62,10 +68,10 @@ public sealed interface Instruction permits LoadInstruction, ConditionalBlock, O
                 return new ConditionalBlock(whenTrue, whenFalse);
             }
         } else if (opcode == ConditionalBlock.ELSE_OPCODE) {
-            throw new IllegalArgumentException("Unexpected ELSE opcode");
+            throw new ScriptException.InvalidScriptException("Unexpected ELSE opcode");
         } else if (opcode == ConditionalBlock.ENDIF_OPCODE) {
             if (depth == 0)
-                throw new IllegalArgumentException("Unexpected ENDIF opcode");
+                throw new ScriptException.InvalidScriptException("Unexpected ENDIF opcode");
             return null;
         } else {
             // must be an ordinary instruction

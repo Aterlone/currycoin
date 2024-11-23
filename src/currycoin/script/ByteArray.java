@@ -1,6 +1,7 @@
 package currycoin.script;
 
 import java.nio.ByteBuffer;
+import java.security.MessageDigest;
 import java.util.Arrays;
 
 public record ByteArray(byte[] data) {
@@ -68,6 +69,10 @@ public record ByteArray(byte[] data) {
 
 	public void apply(ByteBuffer buffer) {
 		buffer.put(data);
+	}
+
+	public void addToDigest(MessageDigest digest) {
+		digest.update(data);
 	}
 
 	@Override

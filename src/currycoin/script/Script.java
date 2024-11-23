@@ -11,13 +11,10 @@ public record Script(List<Instruction> instructions) {
 		instructions = List.copyOf(instructions);
 	}
 
-	public boolean execute(ScriptStack stack) {
+	public void execute(ScriptStack stack) throws ScriptException {
 		for (Instruction instruction : instructions) {
-			boolean result = instruction.execute(stack);
-			if (!result) return false;
+			instruction.execute(stack);
 		}
-
-		return true;
 	}
 
 	public static Script parseFrom(ByteBuffer data) {

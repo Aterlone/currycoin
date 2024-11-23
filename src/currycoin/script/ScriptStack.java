@@ -1,23 +1,29 @@
 package currycoin.script;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
+import java.util.NoSuchElementException;
 
 public class ScriptStack {
     private final Deque<ByteArray> stack = new ArrayDeque<>();
 
-    public void push(ByteArray byteArray) {
+    public void push(ByteArray byteArray) throws ScriptException {
         stack.push(byteArray);
     }
 
-    public ByteArray pop() {
-        return stack.pop();
+    public ByteArray pop() throws ScriptException.StackUnderflowException {
+        try {
+            return stack.pop();
+        } catch (NoSuchElementException e) {
+            throw new ScriptException.StackUnderflowException("Nothing to pop", e);
+        }
     }
 
-    public ByteArray peek() {
-        return stack.peek();
+    public ByteArray peek() throws ScriptException.StackUnderflowException {
+        ByteArray result = stack.peek();
+        if (result == null)
+            throw new ScriptException.StackUnderflowException("Nothing to peek");
+        return result;
     }
 
     public int depth() {

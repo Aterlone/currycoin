@@ -1,5 +1,6 @@
 package currycoin.script.instructions;
 
+import currycoin.script.ScriptException;
 import currycoin.script.ScriptStack;
 
 import java.nio.ByteBuffer;
@@ -12,16 +13,13 @@ public record ConditionalBlock(List<Instruction> whenTrue, List<Instruction> whe
 	}
 
 	@Override
-	public boolean execute(ScriptStack stack) {
+	public void execute(ScriptStack stack) throws ScriptException {
 		boolean condition = stack.pop().asBoolean();
 		List<Instruction> instructions = condition ? whenTrue : whenFalse;
 
 		for (Instruction instruction : instructions) {
-			boolean result = instruction.execute(stack);
-			if (!result) return false;
+			instruction.execute(stack);
 		}
-
-		return true;
 	}
 
 	@Override

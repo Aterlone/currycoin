@@ -52,8 +52,7 @@ public class Main {
 
 		for (Instruction instruction : script.instructions()) {
 			System.out.println("\nexecuting " + instruction);
-			boolean success = instruction.execute(stack);
-			System.out.println("success: " + success);
+			instruction.execute(stack);
 			System.out.println(stack);
 		}
 

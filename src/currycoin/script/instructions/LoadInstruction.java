@@ -1,6 +1,7 @@
 package currycoin.script.instructions;
 
 import currycoin.script.ByteArray;
+import currycoin.script.ScriptException;
 import currycoin.script.ScriptStack;
 
 import java.nio.ByteBuffer;
@@ -17,9 +18,8 @@ public record LoadInstruction(byte numBytes, ByteArray data) implements Instruct
 	}
 
 	@Override
-	public boolean execute(ScriptStack stack) {
+	public void execute(ScriptStack stack) throws ScriptException {
 		stack.push(data);
-		return true;
 	}
 
 	@Override
