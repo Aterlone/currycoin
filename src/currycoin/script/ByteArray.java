@@ -1,5 +1,6 @@
 package currycoin.script;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public record ByteArray(byte[] data) {
@@ -63,6 +64,10 @@ public record ByteArray(byte[] data) {
 
 	public static ByteArray empty() {
 		return ZERO;
+	}
+
+	public void apply(ByteBuffer buffer) {
+		buffer.put(data);
 	}
 
 	@Override

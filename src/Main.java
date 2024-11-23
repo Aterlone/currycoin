@@ -5,6 +5,7 @@ import currycoin.script.Script;
 import currycoin.script.ScriptStack;
 import currycoin.script.instructions.*;
 
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -39,6 +40,15 @@ public class Main {
 				ROTATE_THREE,
 				ARITHMETIC_SUB
 		);
+
+		ByteBuffer buffer = ByteBuffer.allocate(script.byteSize());
+		script.apply(buffer);
+		buffer.flip();
+		Script decoded = Script.parseFrom(buffer);
+		buffer.flip();
+
+		System.out.println(script);
+		System.out.println(decoded);
 
 		for (Instruction instruction : script.instructions()) {
 			System.out.println("\nexecuting " + instruction);

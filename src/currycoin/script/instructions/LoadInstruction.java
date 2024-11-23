@@ -3,6 +3,8 @@ package currycoin.script.instructions;
 import currycoin.script.ByteArray;
 import currycoin.script.ScriptStack;
 
+import java.nio.ByteBuffer;
+
 public record LoadInstruction(byte numBytes, ByteArray data) implements Instruction {
 	public LoadInstruction {
 		if (!isInRange(numBytes)) {
@@ -18,6 +20,17 @@ public record LoadInstruction(byte numBytes, ByteArray data) implements Instruct
 	public boolean execute(ScriptStack stack) {
 		stack.push(data);
 		return true;
+	}
+
+	@Override
+	public int byteSize() {
+		return numBytes + 1;
+	}
+
+	@Override
+	public void apply(ByteBuffer buffer) {
+		buffer.put(numBytes);
+		data.apply(buffer);
 	}
 
 	public static final byte MIN_NUM_BYTES = 0;

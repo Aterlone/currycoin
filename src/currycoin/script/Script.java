@@ -31,4 +31,14 @@ public record Script(List<Instruction> instructions) {
 	public static Script of(Instruction... instructions) {
 		return new Script(List.of(instructions));
 	}
+
+	public int byteSize() {
+		return instructions.stream().mapToInt(Instruction::byteSize).sum();
+	}
+
+	public void apply(ByteBuffer buffer) {
+		for (Instruction instruction : instructions) {
+			instruction.apply(buffer);
+		}
+	}
 }

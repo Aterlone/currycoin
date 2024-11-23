@@ -3,6 +3,7 @@ package currycoin.script.instructions;
 import currycoin.script.ByteArray;
 import currycoin.script.ScriptStack;
 
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.function.Function;
@@ -370,5 +371,15 @@ public enum OrdinaryInstruction implements Instruction {
 	@Override
 	public boolean execute(ScriptStack stack) {
 		return function.apply(stack);
+	}
+
+	@Override
+	public int byteSize() {
+		return 1;
+	}
+
+	@Override
+	public void apply(ByteBuffer buffer) {
+		buffer.put((byte) (FIRST_OPCODE + ordinal()));
 	}
 }

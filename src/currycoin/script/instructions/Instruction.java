@@ -9,6 +9,8 @@ import java.util.List;
 
 public sealed interface Instruction permits LoadInstruction, ConditionalBlock, OrdinaryInstruction {
     boolean execute(ScriptStack stack);
+    int byteSize();
+    void apply(ByteBuffer buffer);
 
     static Instruction parseFrom(ByteBuffer buffer) {
         return parseFrom0(buffer, 0);
