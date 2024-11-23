@@ -10,6 +10,8 @@ import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 
+import static currycoin.script.instructions.ConditionalBlock.whenFalse;
+import static currycoin.script.instructions.ConditionalBlock.whenTrue;
 import static currycoin.script.instructions.LoadInstruction.loadInt;
 import static currycoin.script.instructions.LoadInstruction.ofData;
 import static currycoin.script.instructions.OrdinaryInstruction.*;
@@ -52,7 +54,8 @@ public class Main {
 				ARITHMETIC_SUB,
 				ofData(signatureBytes),
 				ofData(publicKeyBytes),
-				SIGNATURE_CHECK
+				SIGNATURE_CHECK,
+				whenFalse(RETURN_FAIL)
 		);
 
 		ByteBuffer buffer = ByteBuffer.allocate(script.byteSize());
@@ -70,7 +73,7 @@ public class Main {
 			System.out.println(stack);
 		}
 
-		System.out.println("\n\nsuccessful\n");
+		System.out.println("\n\nsuccessful; testing tampered signature now\n");
 
 		// try tampering with the signature
 		byte[] tampered = signatureBytes.data();
@@ -80,7 +83,7 @@ public class Main {
 		Script tamperedScript = Script.of(
 				ofData(tamperedSignatureBytes),
 				ofData(publicKeyBytes),
-				SIGNATURE_CHECK
+				SIGNATURE_CHECK_VERIFY
 		);
 
 		stack = new ScriptStack(hash);
