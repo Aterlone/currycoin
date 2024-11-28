@@ -9,6 +9,10 @@ import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static java.lang.Math.*;
@@ -400,13 +404,58 @@ public enum OrdinaryInstruction implements Instruction {
 	},
 	SIGNATURE_CHECK_ADD {
 		public void execute(ScriptStack stack) throws ScriptException {
-			ByteArray publicKey = stack.pop();
 			int n = stack.pop().toInt();
+
+			ByteArray publicKey = stack.pop();
 			ByteArray signature = stack.pop();
 			Hash hash = stack.dataToSign();
 
 			boolean verified = checkSignature(signature, publicKey, hash);
 			stack.push(ByteArray.fromInt(verified ? n + 1 : n));
+		}
+	},
+	SIGNATURE_CHECK_MULTI {
+		public void execute(ScriptStack stack) throws ScriptException {
+			Hash hash = stack.dataToSign();
+
+			int n = stack.pop().toInt();
+			Deque<ByteArray> publicKeys = new ArrayDeque<>(n);
+			for (int i = 0; i < n; i++) {
+				publicKeys.push(stack.pop());
+			}
+
+			int m = stack.pop().toInt();
+			boolean verified = true;
+			for (int i = 0; i < m; i++) {
+				ByteArray signature = stack.pop();
+
+				if (!hasSignatureMatch(signature, publicKeys, hash)) {
+					verified = false;
+					break;
+				}
+			}
+
+			stack.push(ByteArray.fromInt(verified ? 1 : 0));
+		}
+	},
+	SIGNATURE_CHECK_MULTI_VERIFY {
+		public void execute(ScriptStack stack) throws ScriptException {
+			Hash hash = stack.dataToSign();
+
+			int n = stack.pop().toInt();
+			Deque<ByteArray> publicKeys = new ArrayDeque<>(n);
+			for (int i = 0; i < n; i++) {
+				publicKeys.push(stack.pop());
+			}
+
+			int m = stack.pop().toInt();
+			for (int i = 0; i < m; i++) {
+				ByteArray signature = stack.pop();
+
+				if (!hasSignatureMatch(signature, publicKeys, hash)) {
+					throw new ScriptException.VerificationException("Multi-signature verification failed");
+				}
+			}
 		}
 	},
 	;
@@ -426,6 +475,16 @@ public enum OrdinaryInstruction implements Instruction {
 		} catch (InvalidKeySpecException | SignatureException e) {
 			return false; // this is a mal-formatted signature, not a system failure
 		}
+	}
+
+	private static boolean hasSignatureMatch(ByteArray signature, Deque<ByteArray> publicKeys, Hash hash) throws ScriptException {
+		while (!publicKeys.isEmpty()) {
+			ByteArray publicKey = publicKeys.pop();
+			if (checkSignature(signature, publicKey, hash)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static final byte FIRST_OPCODE = ConditionalBlock.ENDIF_OPCODE + 1;
