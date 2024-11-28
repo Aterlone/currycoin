@@ -1,5 +1,7 @@
 package currycoin;
 
-public record TransactionInput(Hash prevTx, int index, Hash sig) {
+import currycoin.script.Script;
+
+public record TransactionInput(Hash prevTransaction, int index, Script lockingScript, Script unlockingScript) {
 
 }
