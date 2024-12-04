@@ -3,6 +3,7 @@ package currycoin.script;
 import currycoin.Hash;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.NoSuchElementException;
 

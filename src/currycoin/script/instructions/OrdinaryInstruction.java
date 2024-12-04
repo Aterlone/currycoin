@@ -79,19 +79,19 @@ public enum OrdinaryInstruction implements Instruction {
 	},
 	COPY_ITEM {
 		public void execute(ScriptStack stack) throws ScriptException {
-			int index = stack.peek().toInt();
-			var removed = Stream.generate(stack::pop).limit(index + 1).toList();
+			int index = stack.pop().toInt(); // gets removed
+			var removed = Stream.generate(stack::pop).limit(index).toList();
 			ByteArray selected = stack.peek(); // keep the old one too
-			removed.reversed().forEach(stack::push);
+			removed.forEach(stack::push);
 			stack.push(selected);
 		}
 	},
 	ROLL_ITEM {
 		public void execute(ScriptStack stack) throws ScriptException {
-			int index = stack.peek().toInt();
-			var removed = Stream.generate(stack::pop).limit(index + 1).toList();
+			int index = stack.pop().toInt(); // gets removed
+			var removed = Stream.generate(stack::pop).limit(index).toList();
 			ByteArray selected = stack.pop(); // remove it
-			removed.reversed().forEach(stack::push);
+			removed.forEach(stack::push);
 			stack.push(selected);
 		}
 	},
@@ -445,7 +445,7 @@ public enum OrdinaryInstruction implements Instruction {
 			int n = stack.pop().toInt();
 			Deque<ByteArray> publicKeys = new ArrayDeque<>(n);
 			for (int i = 0; i < n; i++) {
-				publicKeys.push(stack.pop());
+				publicKeys.offerLast(stack.pop());
 			}
 
 			int m = stack.pop().toInt();
