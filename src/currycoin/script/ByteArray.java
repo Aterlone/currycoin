@@ -49,12 +49,46 @@ public record ByteArray(byte[] data) {
 		return value;
 	}
 
+	public boolean isLong() {
+		return data.length <= 8;
+	}
+
+	public long toLong() {
+		if (data.length > 8) {
+			throw new ScriptException.VerificationException("Data is too long to be a long");
+		}
+
+		if (data.length == 0) {
+			return 0;
+		}
+
+		// little endian
+		long value = 0;
+		for (int i = 0; i < data.length; i++) {
+			value |= ((long) (data[i] & 0xFF)) << (i * 8);
+		}
+
+		return value;
+	}
+
 	private static final ByteArray ZERO = new ByteArray(new byte[0]);
 
 	public static ByteArray fromInt(int value) {
 		if (value == 0) return ZERO;
 
 		int size = 4 - Integer.numberOfLeadingZeros(value) / 8;
+		byte[] data = new byte[size];
+		for (int i = 0; i < size; i++) {
+			data[i] = (byte) (value >> (i * 8));
+		}
+
+		return new ByteArray(data);
+	}
+
+	public static ByteArray fromLong(long value) {
+		if (value == 0) return ZERO;
+
+		int size = 8 - Long.numberOfLeadingZeros(value) / 8;
 		byte[] data = new byte[size];
 		for (int i = 0; i < size; i++) {
 			data[i] = (byte) (value >> (i * 8));
